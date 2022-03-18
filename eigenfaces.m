@@ -45,21 +45,16 @@ axis off;
 
 %% Réduction de dimension
 
+% --- calcule des valeurs propres
+
 L = P - 1000;
 
 x_bar = mean(data_trn, 2);
 
 X = 1/sqrt(N) * (data_trn-x_bar);
 
-[D, V] = eig(X'*X);
+[V, ~] = eig((X')*X);
+
+U = X*V * ((V')*(X')*X*V)^(-1/2);
 
 
-
-% --- calcule des valeurs propres
-
-
-
-% one = ones(1,N);
-% X= one.
-% x_bar = ;
-% X = 1/
