@@ -53,7 +53,19 @@ x_bar = mean(data_trn, 2);
 
 X = 1/sqrt(N) * (data_trn-x_bar);
 
-[V, ~] = eig((X')*X);
+Gram = (X')*X;
+[V, D] = eig(Gram);
+
+% --- --- elimination de v associé à 0
+% DD = ((D==0) + 10)';
+% [~, vec_0_colum_index] = min(DD(:));
+% vec_0_colum_index = mod(vec_0_colum_index-1, N)+1;
+
+[~, Index_order] = sort(diag(D));
+
+V = V(:, Index_order);
+V = V(:,2:end);
+V = V(:,end:-1:1);
 
 U = X*V * ((V')*(X')*X*V)^(-1/2);
 
