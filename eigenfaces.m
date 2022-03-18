@@ -45,9 +45,7 @@ axis off;
 
 %% Réduction de dimension
 
-% --- calcule des valeurs propres
-
-L = P - 1000;
+% --- calcule des vecteurs propres
 
 x_bar = mean(data_trn, 2);
 
@@ -69,8 +67,32 @@ V = V(:,end:-1:1);
 
 U = X*V * ((V')*(X')*X*V)^(-1/2);
 
-%% Display U
 U = [U zeros(P, 1)];
+
+% --- calcule des valeurs propres
+
+U_val = zeros(1,N-1);
+for i=1:1:N-1
+    lmbda_u = X * (X'*U(:,i));
+    [non_null_val, non_null_index] = max(lmbda_u);
+    U_val(1, i) = non_null_val / U(non_null_index,i);
+end
+
+%% kk ration
+
+L = -1;
+kk = zeros(1, N-1);
+for l=1:1:N-1
+    kk(1, l) = sum(U_val(1:l)) / sum(U_val);
+    if L == -1 && kk(1, l) >= 0.9
+        L = l;
+    end
+end
+
+figure, plot((1:N-1), kk);
+
+%% Display U
+
 figure,
 for i=1:6
     for j=1:10
@@ -80,5 +102,20 @@ for i=1:6
     end
 end
 
+%% reconstruction
+figure,
+for i=1:6
+    for j=1:10
+        image_index = (i-1)*10+j;
+        x = data_trn(:, image_index) - x_bar;
+        x_acp = zeros(size(x)) ;
+        for l=1:1:L
+            x_acp = x_acp + (x' * U(:, l)) * U(:, l);
+        end
+        subplot(6,10, image_index);
+        imagesc(reshape(x_acp+x_bar, [192,168]));
+        colormap(gray);
+    end
+end
 
 
