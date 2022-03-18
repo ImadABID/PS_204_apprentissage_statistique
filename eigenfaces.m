@@ -69,4 +69,16 @@ V = V(:,end:-1:1);
 
 U = X*V * ((V')*(X')*X*V)^(-1/2);
 
+%% Display U
+U = [U zeros(P, 1)];
+figure,
+for i=1:6
+    for j=1:10
+        subplot(6,10, (i-1)*10+j);
+        imagesc(reshape(U(:, (i-1)*10+j), [192,168]));
+        colormap(gray);
+    end
+end
+
+
 
