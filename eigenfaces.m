@@ -4,36 +4,9 @@ clc;
 clear all;
 close all;
 
-%% Images to recontruct
-
-adr = './database/training1/';
-fld = dir(adr);
-nb_elt = length(fld);
-% Data matrix containing the training images in its columns 
-data_trn_to_reconstruct = []; 
-% Vector containing the class of each training image
-lb_trn_to_reconstruct = []; 
-for i=1:nb_elt
-    if fld(i).isdir == false
-        lb_trn_to_reconstruct = [lb_trn_to_reconstruct ; str2num(fld(i).name(6:7))];
-        img = double(imread([adr fld(i).name]));
-        data_trn_to_reconstruct = [data_trn_to_reconstruct img(:)];
-    end
-end
-
-% Size of the training set
-[P_to_reconstruct, N_to_reconstruct] = size(data_trn_to_reconstruct);
-% Classes contained in the training set
-[lb_trn_to_reconstruct,I]=sort(lb_trn_to_reconstruct);
-data_trn_to_reconstruct = data_trn_to_reconstruct(:,I);
-[cls_trn,bd,~] = unique(data_trn_to_reconstruct);
-Nc_to_reconstruct = length(cls_trn); 
-% Number of training images in each class
-size_cls_trn_to_reconstruct = [bd(2:Nc_to_reconstruct)-bd(1:Nc_to_reconstruct-1);N_to_reconstruct-bd(Nc_to_reconstruct)+1]; 
-
 %% Data extraction
 % Training set
-adr = './database/training1/';
+adr = './database/training2/';
 fld = dir(adr);
 nb_elt = length(fld);
 % Data matrix containing the training images in its columns 
@@ -146,25 +119,5 @@ for i=1:Nc
     end
 end
 
-% figure,
-% size_cls_trn_max_to_reconstruct = max(size_cls_trn_to_reconstruct);
-% for i=1:Nc_to_reconstruct
-%     
-%     for j=1:size_cls_trn_max_to_reconstruct
-%         image_index = (i-1)*size_cls_trn_max_to_reconstruct+j;
-%         x = data_trn_to_reconstruct(:, image_index) - x_bar;
-%         x_acp = zeros(size(x)) ;
-%         for l=1:1:L
-%             x_acp = x_acp + (x' * U(:, l)) * U(:, l);
-%         end
-%         subplot(Nc_to_reconstruct,size_cls_trn_max_to_reconstruct, image_index);
-%         imagesc(reshape(x_acp+x_bar, [192,168]));
-%         colormap(gray);
-%     end
-% end
-
-
 %% l*
 fprintf("la dimension l* du sous-espace de reconstruction de telle manière à garantir un ratio de %f est %d.\n", alpha, L);
-
-
