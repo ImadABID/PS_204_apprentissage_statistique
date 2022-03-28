@@ -4,6 +4,33 @@ clc;
 clear all;
 close all;
 
+%% Images to recontruct
+
+adr = './database/training1/';
+fld = dir(adr);
+nb_elt = length(fld);
+% Data matrix containing the training images in its columns 
+data_trn_to_reconstruct = []; 
+% Vector containing the class of each training image
+lb_trn_to_reconstruct = []; 
+for i=1:nb_elt
+    if fld(i).isdir == false
+        lb_trn_to_reconstruct = [lb_trn_to_reconstruct ; str2num(fld(i).name(6:7))];
+        img = double(imread([adr fld(i).name]));
+        data_trn_to_reconstruct = [data_trn_to_reconstruct img(:)];
+    end
+end
+
+% Size of the training set
+[P_to_reconstruct, N_to_reconstruct] = size(data_trn_to_reconstruct);
+% Classes contained in the training set
+[lb_trn_to_reconstruct,I]=sort(lb_trn_to_reconstruct);
+data_trn_to_reconstruct = data_trn_to_reconstruct(:,I);
+[cls_trn,bd,~] = unique(data_trn_to_reconstruct);
+Nc_to_reconstruct = length(cls_trn); 
+% Number of training images in each class
+size_cls_trn_to_reconstruct = [bd(2:Nc_to_reconstruct)-bd(1:Nc_to_reconstruct-1);N_to_reconstruct-bd(Nc_to_reconstruct)+1]; 
+
 %% Data extraction
 % Training set
 adr = './database/training1/';
@@ -79,12 +106,12 @@ for i=1:1:N-1
 end
 
 %% kk ration
-
+alpha = 0.9;
 L = -1;
 kk = zeros(1, N-1);
 for l=1:1:N-1
     kk(1, l) = sum(U_val(1:l)) / sum(U_val);
-    if L == -1 && kk(1, l) >= 0.9
+    if L == -1 && kk(1, l) >= alpha
         L = l;
     end
 end
@@ -94,28 +121,50 @@ figure, plot((1:N-1), kk);
 %% Display U
 
 figure,
-for i=1:6
-    for j=1:10
-        subplot(6,10, (i-1)*10+j);
-        imagesc(reshape(U(:, (i-1)*10+j), [192,168]));
+size_cls_trn_max = max(size_cls_trn);
+for i=1:Nc
+    for j=1:size_cls_trn_max
+        subplot(Nc,size_cls_trn_max, (i-1)*size_cls_trn_max+j);
+        imagesc(reshape(U(:, (i-1)*size_cls_trn_max+j), [192,168]));
         colormap(gray);
     end
 end
 
 %% reconstruction
 figure,
-for i=1:6
-    for j=1:10
-        image_index = (i-1)*10+j;
+for i=1:Nc
+    for j=1:size_cls_trn_max
+        image_index = (i-1)*size_cls_trn_max+j;
         x = data_trn(:, image_index) - x_bar;
         x_acp = zeros(size(x)) ;
         for l=1:1:L
             x_acp = x_acp + (x' * U(:, l)) * U(:, l);
         end
-        subplot(6,10, image_index);
+        subplot(Nc,size_cls_trn_max, image_index);
         imagesc(reshape(x_acp+x_bar, [192,168]));
         colormap(gray);
     end
 end
+
+% figure,
+% size_cls_trn_max_to_reconstruct = max(size_cls_trn_to_reconstruct);
+% for i=1:Nc_to_reconstruct
+%     
+%     for j=1:size_cls_trn_max_to_reconstruct
+%         image_index = (i-1)*size_cls_trn_max_to_reconstruct+j;
+%         x = data_trn_to_reconstruct(:, image_index) - x_bar;
+%         x_acp = zeros(size(x)) ;
+%         for l=1:1:L
+%             x_acp = x_acp + (x' * U(:, l)) * U(:, l);
+%         end
+%         subplot(Nc_to_reconstruct,size_cls_trn_max_to_reconstruct, image_index);
+%         imagesc(reshape(x_acp+x_bar, [192,168]));
+%         colormap(gray);
+%     end
+% end
+
+
+%% l*
+fprintf("la dimension l* du sous-espace de reconstruction de telle manière à garantir un ratio de %f est %d.\n", alpha, L);
 
 
