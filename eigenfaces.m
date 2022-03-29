@@ -136,7 +136,7 @@ image_to_classify_2_w = x2w(image_to_classify, x_bar, U, l);
 % --- w representation of training set
 data_trn_2_w = zeros(size(data_trn));
 for i = 1:N
-    data_trn_2_w(:, i) = x2w(data_trn_2_w(:, i), x_bar, U, l);
+    data_trn_2_w(:, i) = x2w(data_trn(:, i), x_bar, U, l);
 end
 
 % --- find k-Nearest Neighbors
@@ -147,15 +147,18 @@ for k_index = 1:k
     min_dist_index = -1;
     for neighbors_index = 1:N
         dist = norm(image_to_classify_2_w - data_trn_2_w(:, neighbors_index));
+        fprintf("dist = %f\n", dist);
         if ...
-                ~(neighbors_index == any(k_NN_indexes(1,1:k_index-1))) && ...
+                ~val_in_table(k_NN_indexes(1:k_index-1), neighbors_index) && ...
                 (min_dist_index == -1 || min_dist > dist)
         
             % --------
             min_dist_index = neighbors_index;
             min_dist = dist;
         end
-        k_NN_indexes(1, neighbors_index) = min_dist_index;
     end
+    k_NN_indexes(1, k_index) = min_dist_index;
 end
+
+close all;
 
