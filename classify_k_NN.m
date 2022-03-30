@@ -1,10 +1,8 @@
-function image_class = classify_k_NN(image_to_classify_path, data_trn, lb_trn, x_bar, U, l, N)
+function image_class = classify_k_NN(image_to_classify, data_trn, lb_trn, x_bar, U, l, N)
     % --- params
     k = 12;
     
-    % --- read & w representation of image to classify
-    image_to_classify = imread(image_to_classify_path);
-    image_to_classify = double(image_to_classify(:));
+    % --- w representation of image to classify
     image_to_classify_2_w = x2w(image_to_classify, x_bar, U, l);
 
     % --- w representation of training set
