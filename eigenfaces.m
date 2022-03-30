@@ -104,10 +104,30 @@ fprintf("la dimension l* du sous-espace de reconstruction de telle manière à g
 %% Classifieur k-NN
 
 % --- classification params
-image_to_classify_path = "./database/test6/yaleB26_P00A+110E+65.pgm";
-
-image_class = classify_k_NN(image_to_classify_path, data_trn, lb_trn, x_bar, U, l, N);
-
-
+image_to_classify_path = "./database/test1/yaleB09_P00A+020E+10.pgm";
+image_to_classify = imread(image_to_classify_path);
+image_to_classify = double(image_to_classify(:));
+image_class = classify_k_NN(image_to_classify, data_trn, lb_trn, x_bar, U, l, N);
 fprintf("image class = %d\n", image_class);
 
+%% Matrice de confusion
+nbr_of_test_set = 6;
+
+confMat = zeros(Nc, Nc, nbr_of_test_set);
+
+for test_set_index = 1:nbr_of_test_set
+    folder_path = "./database/test"+test_set_index+"/";
+    folder_path = folder_path{1}; % transforming from "string" to 'string'
+    [data_test, lb_test_real, P, N_test, ~, ~] = data_extraction(folder_path);
+    
+    lb_test_predicted = zeros(N_test, 1);
+
+    for image_index = 1:N_test
+        lb_test_predicted(image_index) = classify_k_NN(data_test(:,image_index), data_trn, lb_trn, x_bar, U, l, N);
+    end
+
+    confMat(:,:, test_set_index) = confusionmat(lb_test_real, lb_test_predicted);
+
+    confMat(:,:, test_set_index)
+
+end
