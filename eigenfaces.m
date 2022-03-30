@@ -6,7 +6,7 @@ close all;
 
 %% Data extraction
 % Training set
-adr = './database/training2/';
+adr = './database/training1/';
 fld = dir(adr);
 nb_elt = length(fld);
 % Data matrix containing the training images in its columns 
@@ -125,7 +125,7 @@ fprintf("la dimension l* du sous-espace de reconstruction de telle manière à g
 %% Classifieur k-NN
 
 % --- classification params
-image_to_classify_path = "./database/test1/yaleB01_P00A+005E+10.pgm";
+image_to_classify_path = "./database/test6/yaleB26_P00A+110E+65.pgm";
 k = 12;
 
 % --- read & w representation of image to classify
@@ -147,7 +147,6 @@ for k_index = 1:k
     min_dist_index = -1;
     for neighbors_index = 1:N
         dist = norm(image_to_classify_2_w - data_trn_2_w(:, neighbors_index));
-        fprintf("dist = %f\n", dist);
         if ...
                 ~val_in_table(k_NN_indexes(1:k_index-1), neighbors_index) && ...
                 (min_dist_index == -1 || min_dist > dist)
@@ -160,5 +159,10 @@ for k_index = 1:k
     k_NN_indexes(1, k_index) = min_dist_index;
 end
 
-close all;
+[nbr_of_occurence_of_each_class, image_class_tab] = groupcounts(lb_trn(k_NN_indexes)');
+[~, image_class_index] = max(nbr_of_occurence_of_each_class);
+image_class = image_class_tab{image_class_index};
+
+
+fprintf("image class = %d\n", image_class);
 
