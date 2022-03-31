@@ -145,3 +145,11 @@ for test_set_index = 1:nbr_of_test_set
     err_rate(1, test_set_index) = err;
 
 end
+
+%% Classifieur Gauss
+
+    image_to_classify_path = "./database/test1/yaleB09_P00A+020E+10.pgm";
+    image_to_classify = imread(image_to_classify_path);
+    image_to_classify = double(image_to_classify(:));
+    image_class = classify_gauss(image_to_classify, data_trn, lb_trn, x_bar, U, l, N, size_cls_trn, Nc);
+    fprintf("image class = %d\n", image_class);

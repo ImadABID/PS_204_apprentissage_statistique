@@ -6,7 +6,7 @@ function image_class = classify_k_NN(image_to_classify, data_trn, lb_trn, x_bar,
     image_to_classify_2_w = x2w(image_to_classify, x_bar, U, l);
 
     % --- w representation of training set
-    data_trn_2_w = zeros(size(data_trn));
+    data_trn_2_w = zeros(l,N);
     for i = 1:N
         data_trn_2_w(:, i) = x2w(data_trn(:, i), x_bar, U, l);
     end
