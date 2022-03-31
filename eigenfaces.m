@@ -113,7 +113,8 @@ fprintf("image class = %d\n", image_class);
 %% Matrice de confusion
 nbr_of_test_set = 6;
 
-confMat = zeros(Nc, Nc, nbr_of_test_set);
+conf_mat = zeros(Nc, Nc, nbr_of_test_set);
+err_rate = zeros(1, nbr_of_test_set);
 
 for test_set_index = 1:nbr_of_test_set
     folder_path = "./database/test"+test_set_index+"/";
@@ -126,8 +127,21 @@ for test_set_index = 1:nbr_of_test_set
         lb_test_predicted(image_index) = classify_k_NN(data_test(:,image_index), data_trn, lb_trn, x_bar, U, l, N);
     end
 
-    confMat(:,:, test_set_index) = confusionmat(lb_test_real, lb_test_predicted);
+    % confmat not working
+    %[confMat(:,:, test_set_index), err_rate(1, test_set_index)] = confmat(lb_test_real, lb_test_predicted);
 
-    confMat(:,:, test_set_index)
+    C = confusionmat(lb_test_real, lb_test_predicted);
+    C = C ./ sum(C(1,:));
+
+    err = sum(sum(C-diag(diag(C))))/sum(sum(C));
+
+    fprintf("\n-------------------\n\nTest %d :\n", test_set_index);
+    fprintf("Confusion matrix :");
+    display(C);
+    fprintf("error rate : %f\n", err);
+    
+
+    conf_mat(:,:, test_set_index) = C;
+    err_rate(1, test_set_index) = err;
 
 end
