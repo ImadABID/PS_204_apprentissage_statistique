@@ -179,6 +179,7 @@ for test_set_index = 1:nbr_of_test_set
     err_rate(1, test_set_index) = err;
 end
 
+
 %% Nuage 
 image_visage1= data_trn(:,find(lb_trn==1));
 image_visage2= data_trn(:,find(lb_trn==5));
