@@ -12,8 +12,8 @@ function image_class = classify_gauss(image_to_classify, data_trn, lb_trn, x_bar
     
     % --- computing mean of same face images
     same_face_mean_2_w = zeros(l, Nc);
+    class_indexes = unique(lb_trn);
     for class_ii=1:Nc
-        class_indexes = unique(lb_trn);
         images_same_face = data_trn_2_w(:, find(lb_trn==class_indexes(class_ii)));
         same_face_mean_2_w(:, class_ii) = mean(images_same_face, 2);
     end
