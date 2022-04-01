@@ -110,6 +110,7 @@ image_to_classify = double(image_to_classify(:));
 image_class = classify_k_NN(image_to_classify, data_trn, lb_trn, x_bar, U, l, N);
 fprintf("image class = %d\n", image_class);
 
+
 %% Matrice de confusion
 nbr_of_test_set = 6;
 
@@ -135,21 +136,95 @@ for test_set_index = 1:nbr_of_test_set
 
     err = sum(sum(C-diag(diag(C))))/sum(sum(C));
 
-    fprintf("\n-------------------\n\nTest %d :\n", test_set_index);
-    fprintf("Confusion matrix :");
-    display(C);
-    fprintf("error rate : %f\n", err);
-    
+%     fprintf("\n-------------------\n\nTest %d :\n", test_set_index);
+%     fprintf("Confusion matrix :");
+%     display(C);
+%     fprintf("error rate : %f\n", err);    
 
     conf_mat(:,:, test_set_index) = C;
     err_rate(1, test_set_index) = err;
-
 end
+
+
+%% Nuage 
+image_visage1= data_trn(:,find(lb_trn==1));
+image_visage2= data_trn(:,find(lb_trn==5));
+image_visage3= data_trn(:,find(lb_trn==9));
+
+[~,W] = size(image_visage1);
+data_trn_2_w_1 = zeros(l,W);
+data_trn_2_w_2 = zeros(l,W);
+data_trn_2_w_3 = zeros(l,W);
+for i = 1:W
+    data_trn_2_w_1(:, i) = x2w(image_visage1(:, i), x_bar, U, l);
+    data_trn_2_w_2(:, i) = x2w(image_visage2(:, i), x_bar, U, l);
+    data_trn_2_w_3(:, i) = x2w(image_visage3(:, i), x_bar, U, l);
+end
+
+figure,
+subplot(2,2,1)
+hold on
+scatter(data_trn_2_w_1(1,:),data_trn_2_w_1(2,:),'filled','red');
+scatter(mean(data_trn_2_w_1(1,:)),mean(data_trn_2_w_1(2,:)),'red');
+
+scatter(data_trn_2_w_2(1,:),data_trn_2_w_2(2,:),'filled','green');
+scatter(mean(data_trn_2_w_2(1,:)),mean(data_trn_2_w_2(2,:)),'green');
+
+scatter(data_trn_2_w_3(1,:),data_trn_2_w_3(2,:),'filled','blue');
+scatter(mean(data_trn_2_w_3(1,:)),mean(data_trn_2_w_3(2,:)),'blue');
+
+hold off
+legend('class 1','moyenne class 1','class 5','moyenne class 5','class 9','moyenne class 9');
+title('Couple (1,2)');
+  
+subplot(2,2,2)
+hold on
+scatter(data_trn_2_w_1(2,:),data_trn_2_w_1(3,:),'filled','red');
+scatter(mean(data_trn_2_w_1(2,:)),mean(data_trn_2_w_1(3,:)),'red');
+
+scatter(data_trn_2_w_2(2,:),data_trn_2_w_2(3,:),'filled','green');
+scatter(mean(data_trn_2_w_2(2,:)),mean(data_trn_2_w_2(3,:)),'green');
+
+scatter(data_trn_2_w_3(2,:),data_trn_2_w_3(3,:),'filled','blue');
+scatter(mean(data_trn_2_w_3(2,:)),mean(data_trn_2_w_3(3,:)),'blue');
+hold off
+legend('class 1','moyenne class 1','class 5','moyenne class 5','class 9','moyenne class 9');
+title('Couple (2,3)');
+
+subplot(2,2,3)
+hold on
+scatter(data_trn_2_w_1(3,:),data_trn_2_w_1(4,:),'filled','red');
+scatter(mean(data_trn_2_w_1(3,:)),mean(data_trn_2_w_1(4,:)),'red');
+
+scatter(data_trn_2_w_2(3,:),data_trn_2_w_2(4,:),'filled','green');
+scatter(mean(data_trn_2_w_2(3,:)),mean(data_trn_2_w_2(4,:)),'green');
+
+scatter(data_trn_2_w_3(3,:),data_trn_2_w_3(4,:),'filled','blue');
+scatter(mean(data_trn_2_w_3(3,:)),mean(data_trn_2_w_3(4,:)),'blue');
+hold off
+legend('class 1','moyenne class 1','class 5','moyenne class 5','class 9','moyenne class 9');
+title('Couple (3,4)');
+
+subplot(2,2,4)
+hold on
+
+scatter(data_trn_2_w_1(4,:),data_trn_2_w_1(5,:),'filled','red');
+scatter(mean(data_trn_2_w_1(4,:)),mean(data_trn_2_w_1(5,:)),'red');
+
+scatter(data_trn_2_w_2(4,:),data_trn_2_w_2(5,:),'filled','green');
+scatter(mean(data_trn_2_w_2(4,:)),mean(data_trn_2_w_2(5,:)),'green');
+
+scatter(data_trn_2_w_3(4,:),data_trn_2_w_3(5,:),'filled','blue');
+scatter(mean(data_trn_2_w_3(4,:)),mean(data_trn_2_w_3(5,:)),'blue');
+hold off
+
+legend('class 1','moyenne class 1','class 5','moyenne class 5','class 9','moyenne class 9');
+title('Couple (4,5)');
 
 %% Classifieur Gauss
 
-    image_to_classify_path = "./database/test1/yaleB09_P00A+020E+10.pgm";
-    image_to_classify = imread(image_to_classify_path);
-    image_to_classify = double(image_to_classify(:));
-    image_class = classify_gauss(image_to_classify, data_trn, lb_trn, x_bar, U, l, N, size_cls_trn, Nc);
-    fprintf("image class = %d\n", image_class);
+image_to_classify_path = "./database/test1/yaleB09_P00A+020E+10.pgm";
+image_to_classify = imread(image_to_classify_path);
+image_to_classify = double(image_to_classify(:));
+image_class = classify_gauss(image_to_classify, data_trn, lb_trn, x_bar, U, l, N, size_cls_trn, Nc);
+fprintf("image class = %d\n", image_class);

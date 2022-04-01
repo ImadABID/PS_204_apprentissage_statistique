@@ -18,23 +18,11 @@ function image_class = classify_gauss(image_to_classify, data_trn, lb_trn, x_bar
         same_face_mean_2_w(:, class_ii) = mean(images_same_face, 2);
     end
     
-    display(size(data_trn_2_w));
-    display(size(same_face_mean_2_w));
-    
     % --- computing covariance matrix
     i = 1;
     sigma = zeros(l, l);
     for class_ii=1:Nc
         for image_i=1:size_cls_trn(class_ii)
-            
-            % ---------
-            
-            display(i);
-            display(size(data_trn_2_w(:, i)));
-            display(size(same_face_mean_2_w(:, class_ii)));
-            
-            % ---------
-            
             sigma = sigma + (data_trn_2_w(:, i) - same_face_mean_2_w(:,class_ii)) * (data_trn_2_w(:, i) - same_face_mean_2_w(:,class_ii))';
             i = i + 1;
         end
