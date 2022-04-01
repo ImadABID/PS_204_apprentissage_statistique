@@ -111,7 +111,7 @@ image_class = classify_k_NN(image_to_classify, data_trn, lb_trn, x_bar, U, l, N)
 fprintf("image class = %d\n", image_class);
 
 
-%% Matrice de confusion
+%% Matrice de confusion pour classifieur k-NN
 nbr_of_test_set = 6;
 
 conf_mat = zeros(Nc, Nc, nbr_of_test_set);
@@ -136,15 +136,48 @@ for test_set_index = 1:nbr_of_test_set
 
     err = sum(sum(C-diag(diag(C))))/sum(sum(C));
 
-%     fprintf("\n-------------------\n\nTest %d :\n", test_set_index);
-%     fprintf("Confusion matrix :");
-%     display(C);
-%     fprintf("error rate : %f\n", err);    
+    fprintf("\n-------------------\n\nTest %d :\n", test_set_index);
+    fprintf("Confusion matrix :");
+    display(C);
+    fprintf("error rate : %f\n", err);    
 
     conf_mat(:,:, test_set_index) = C;
     err_rate(1, test_set_index) = err;
 end
 
+%% Matrice de confusion pour classifieur guassien
+nbr_of_test_set = 6;
+
+conf_mat = zeros(Nc, Nc, nbr_of_test_set);
+err_rate = zeros(1, nbr_of_test_set);
+
+for test_set_index = 1:nbr_of_test_set
+    folder_path = "./database/test"+test_set_index+"/";
+    folder_path = folder_path{1}; % transforming from "string" to 'string'
+    [data_test, lb_test_real, P, N_test, ~, ~] = data_extraction(folder_path);
+    
+    lb_test_predicted = zeros(N_test, 1);
+
+    for image_index = 1:N_test
+        lb_test_predicted(image_index) = classify_gauss(data_test(:,image_index), data_trn, lb_trn, x_bar, U, l, N,size_cls_trn,Nc);
+    end
+
+    % confmat not working
+    %[confMat(:,:, test_set_index), err_rate(1, test_set_index)] = confmat(lb_test_real, lb_test_predicted);
+
+    C = confusionmat(lb_test_real, lb_test_predicted);
+    C = C ./ sum(C(1,:));
+
+    err = sum(sum(C-diag(diag(C))))/sum(sum(C));
+
+    fprintf("\n-------------------\n\nTest %d :\n", test_set_index);
+    fprintf("Confusion matrix :");
+    display(C);
+    fprintf("error rate : %f\n", err);    
+
+    conf_mat(:,:, test_set_index) = C;
+    err_rate(1, test_set_index) = err;
+end
 
 %% Nuage 
 image_visage1= data_trn(:,find(lb_trn==1));
@@ -227,4 +260,11 @@ image_to_classify_path = "./database/test1/yaleB09_P00A+020E+10.pgm";
 image_to_classify = imread(image_to_classify_path);
 image_to_classify = double(image_to_classify(:));
 image_class = classify_gauss(image_to_classify, data_trn, lb_trn, x_bar, U, l, N, size_cls_trn, Nc);
+fprintf("image class = %d\n", image_class);
+%% Classifieur Gauss modify
+
+image_to_classify_path = "./database/test1/yaleB09_P00A+020E+10.pgm";
+image_to_classify = imread(image_to_classify_path);
+image_to_classify = double(image_to_classify(:));
+image_class = classify_gauss_modify(image_to_classify, data_trn, lb_trn, x_bar, U, l, N, size_cls_trn, Nc);
 fprintf("image class = %d\n", image_class);
